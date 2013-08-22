@@ -31,6 +31,10 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
+When /^I visit edit_post_1$/ do
+  visit '/admin/content/edit/1'
+end
+
 Given /^the blog is set up$/ do
   Blog.default.update_attributes!({:blog_name => 'Teh Blag',
                                    :base_url => 'http://localhost:3000'});
