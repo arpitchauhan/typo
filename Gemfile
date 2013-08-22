@@ -59,4 +59,5 @@ group :development, :test do
   gem 'capybara'
   gem 'launchy'
   gem 'autotest'
+  gem 'railroady'
 end
