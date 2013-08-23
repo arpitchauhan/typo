@@ -630,5 +630,8 @@ describe Article do
     end
 
   end
+
+  describe '#merge_articles'
+  
 end
 

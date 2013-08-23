@@ -149,5 +149,13 @@
   </div>    
   </div>
 
+  <div class='Merge'>
+  <h4>Merge Articles</h4>
+  <%= form_tag('/merge_articles', method: :post) do  -%>
+  <p>Article ID</p> <%= input :type=>"text", :name=>"other_article_id" %>
+  <br>
+  <%= submit_tag "Merge", :action => 'merge_articles' %>
+  <% end -%>
+  </div>
 </div>
 

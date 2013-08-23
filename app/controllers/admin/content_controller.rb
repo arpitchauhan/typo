@@ -240,4 +240,14 @@ class Admin::ContentController < Admin::BaseController
   def setup_resources
     @resources = Resource.by_created_at
   end
+
+  def merge_articles
+    debug
+    @article.merge_with(params[:other_article_id]) 
+  end
+
 end
+
+
+
+
