@@ -467,14 +467,43 @@ class Article < Content
     return from..to
   end
 
-  def merge_with(other_article_id)
-    @other_article = Article.find_by_id(other_article_id)
-    self.body_and_extended << " " << @other_article.body_and_extended
-    debugger
-    @other_article.comments.each do |comment|
-    end 
-    @other_article.delete
-
+  def merge (invader)
+    # aggregate the authors and the article bodies
+    #self.author += '.' + invader.author
+    #self.body += '\n' + invader.body
+    
+    self.body += invader.body
+    self.extended += invader.extended
+    
+    # merge the comments
+    Comment.find_all_by_article_id(invader.id).each do |comment|
+      comment.article = self
+      comment.save
+    end
+    
+    # check if the invader is a merged article
+    # if so, then point all of those merges to this article
+    #MergedAuthor.where("article_id" => invader.id).each do |merge|
+    #  merge["article_id"] = self.id
+    #  merge.save
+    #end
+    # add the merged articles entry
+    #MergedAuthor.new("user_id" => invader.user_id, "article_id" => self.id).save
+    
+    # save the article and remove the old
+    self.save
+    invader.destroy
   end
+
+
+  #def merge_with(other_article_id)
+  #  @other_article = Article.find_by_id(other_article_id)
+  #  self.body_and_extended << " " << @other_article.body_and_extended
+  #  debugger
+  #  @other_article.comments.each do |comment|
+  #  end 
+  #  @other_article.delete
+
+  #end
 
 end

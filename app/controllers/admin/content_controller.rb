@@ -6,6 +6,29 @@ class Admin::ContentController < Admin::BaseController
 
   cache_sweeper :blog_sweeper
 
+  def merge
+    #debugger
+    #p 'I got to the merge function'
+    @article = Article.find(params[:id])
+    @merge_article = Article.find(params[:merge_with])
+    #p 'articles', @article, @merge_article
+    unless @article.access_by? current_user
+      redirect_to :action => 'index'
+      flash[:error] = _("Error, you are not allowed to perform this action")
+      return
+    end
+    
+    unless @article and @merge_article
+      redirect_to :action => 'edit'
+      flash[:error] = _("Error, merge failed.")
+      return
+    end
+    @article.merge(@merge_article)
+    flash[:notice] = _("Article was successfully merged.")
+    redirect_to :action => 'index'
+  end
+
+
   def auto_complete_for_article_keywords
     @items = Tag.find_with_char params[:article][:keywords].strip
     render :inline => "<%= raw auto_complete_result @items, 'name' %>"
@@ -241,10 +264,12 @@ class Admin::ContentController < Admin::BaseController
     @resources = Resource.by_created_at
   end
 
-  def merge_articles
-    debug
-    @article.merge_with(params[:other_article_id]) 
-  end
+  
+
+  #def merge
+  #  debugger
+  #  @article.merge_with(params[:other_article_id]) 
+  #end
 
 end
 

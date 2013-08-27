@@ -59,6 +59,29 @@ And /^I am logged into the admin panel$/ do
   end
 end
 
+And /^I create an article with title "(.*)" and body "(.*)"$/ do |title, body|
+  visit '/admin/content/new'
+  
+  if page.respond_to? :should
+    page.should have_content('New Article')
+  else
+    assert page.has_content?('New Article')
+  end
+
+  fill_in 'article_title', :with => title
+  fill_in 'article__body_and_extended_editor', :with => body
+  click_button 'Publish'
+  if page.respond_to? :should
+    page.should have_content('Article was successfully created')
+  else
+    assert page.has_content?('Article was successfully created')
+  end
+
+end
+
+
+
+
 # Single-line step scoper
 When /^(.*) within (.*[^:])$/ do |step, parent|
   with_scope(parent) { When step }
