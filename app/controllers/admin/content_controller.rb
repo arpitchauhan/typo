@@ -23,7 +23,7 @@ class Admin::ContentController < Admin::BaseController
       flash[:error] = _("Error, merge failed.")
       return
     end
-    @article.merge(@merge_article)
+    @article.merge_with(@merge_article.id)
     flash[:notice] = _("Article was successfully merged.")
     redirect_to :action => 'index'
   end

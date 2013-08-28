@@ -31,10 +31,6 @@ module WithinHelpers
 end
 World(WithinHelpers)
 
-When /^I visit edit_post_1$/ do
-  visit '/admin/content/edit/1'
-end
-
 Given /^the blog is set up$/ do
   Blog.default.update_attributes!({:blog_name => 'Teh Blag',
                                    :base_url => 'http://localhost:3000'});
@@ -57,26 +53,6 @@ And /^I am logged into the admin panel$/ do
   else
     assert page.has_content?('Login successful')
   end
-end
-
-And /^I create an article with title "(.*)" and body "(.*)"$/ do |title, body|
-  visit '/admin/content/new'
-  
-  if page.respond_to? :should
-    page.should have_content('New Article')
-  else
-    assert page.has_content?('New Article')
-  end
-
-  fill_in 'article_title', :with => title
-  fill_in 'article__body_and_extended_editor', :with => body
-  click_button 'Publish'
-  if page.respond_to? :should
-    page.should have_content('Article was successfully created')
-  else
-    assert page.has_content?('Article was successfully created')
-  end
-
 end
 
 

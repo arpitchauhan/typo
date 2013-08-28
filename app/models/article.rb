@@ -122,6 +122,35 @@ class Article < Content
 
   end
 
+  def merge_with (other_article_id)
+    # aggregate the authors and the article bodies
+    #self.author += '.' + other_article.author
+    #self.body += '\n' + other_article.body
+    other_article = Article.find_by_id(other_article_id)
+    self.body += other_article.body
+    self.extended += other_article.extended
+    
+    # merge the comments
+    Comment.find_all_by_article_id(other_article.id).each do |comment|
+      comment.article = self
+      comment.save
+    end
+    
+    # check if the other_article is a merged article
+    # if so, then point all of those merges to this article
+    #MergedAuthor.where("article_id" => other_article.id).each do |merge|
+    #  merge["article_id"] = self.id
+    #  merge.save
+    #end
+    # add the merged articles entry
+    #MergedAuthor.new("user_id" => other_article.user_id, "article_id" => self.id).save
+    
+    # save the article and remove the old
+    self.save
+    other_article.destroy
+  end
+
+
   def year_url
     published_at.year.to_s
   end
@@ -467,33 +496,6 @@ class Article < Content
     return from..to
   end
 
-  def merge (invader)
-    # aggregate the authors and the article bodies
-    #self.author += '.' + invader.author
-    #self.body += '\n' + invader.body
-    
-    self.body += invader.body
-    self.extended += invader.extended
-    
-    # merge the comments
-    Comment.find_all_by_article_id(invader.id).each do |comment|
-      comment.article = self
-      comment.save
-    end
-    
-    # check if the invader is a merged article
-    # if so, then point all of those merges to this article
-    #MergedAuthor.where("article_id" => invader.id).each do |merge|
-    #  merge["article_id"] = self.id
-    #  merge.save
-    #end
-    # add the merged articles entry
-    #MergedAuthor.new("user_id" => invader.user_id, "article_id" => self.id).save
-    
-    # save the article and remove the old
-    self.save
-    invader.destroy
-  end
 
 
   #def merge_with(other_article_id)
