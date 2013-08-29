@@ -12,9 +12,10 @@ class Admin::ContentController < Admin::BaseController
     @article = Article.find(params[:id])
     @merge_article = Article.find(params[:merge_with])
     #p 'articles', @article, @merge_article
-    unless @article.access_by? current_user
-      redirect_to :action => 'index'
+    if current_user.admin? == false #@article.access_by? current_user == false or 
       flash[:error] = _("Error, you are not allowed to perform this action")
+      redirect_to :action => 'index'
+      
       return
     end
     

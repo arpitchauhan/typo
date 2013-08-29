@@ -4,6 +4,7 @@ describe Admin::ContentController do
   render_views
 
   # Like it's a shared, need call everywhere
+
   shared_examples_for 'index action' do
 
     it 'should render template index' do
@@ -470,8 +471,11 @@ describe Admin::ContentController do
       #TODO delete this after remove fixture
       Profile.delete_all
       @user = Factory(:user, :text_filter => Factory(:markdown), :profile => Factory(:profile_admin, :label => Profile::ADMIN))
+      @non_admin_user = Factory(:user, :text_filter => Factory(:markdown), :profile => Factory(:profile_contributor))
       @user.editor = 'simple'
       @user.save
+      @non_admin_user.editor = 'simple'
+      @non_admin_user.save
       @article = Factory(:article)
       request.session = { :user => @user.id }
     end
@@ -482,6 +486,32 @@ describe Admin::ContentController do
     it_should_behave_like 'autosave action'
 
     describe 'edit action' do
+      describe 'merging two articles' do
+        it 'should not allow non-admin to merge' do
+          
+          #article2 = Factory(:article)
+          #p '1', request.session
+          #request.session.clear
+          #p '2', request.session
+          #request.session = { :user => @non_admin_user.id }
+          #p '3', request.session
+          #post :merge, :id => @article.id, :merge_with => article2.id
+          #p "flash is ", flash
+          #flash[:error].should == _("Error, you are not allowed to perform this action")
+          
+        end
+
+        it 'should successfully merge two articles' do
+          article2 = Factory(:article)
+          #@article.should_receive(:merge_with)
+          post :merge, :id => @article.id, :merge_with => article2.id
+         
+          flash[:notice].should == _("Article was successfully merged.")
+          
+          response.should redirect_to(:action => 'index')
+
+        end
+      end
 
       it 'should edit article' do
         get :edit, 'id' => @article.id
@@ -544,6 +574,8 @@ describe Admin::ContentController do
         Article.should_not be_exists({:id => draft.id})
         Article.should_not be_exists({:id => draft_2.id})
       end
+
+
     end
 
     describe 'resource_add action' do
@@ -610,7 +642,7 @@ describe Admin::ContentController do
   end
 
   describe 'with publisher connection' do
-
+    
     before :each do
       Factory(:blog)
       @user = Factory(:user, :text_filter => Factory(:markdown), :profile => Factory(:profile_publisher))
@@ -671,4 +703,28 @@ describe Admin::ContentController do
 
     end
   end
+=begin   
+  describe '#merge' do
+    
+    before :each do
+      @current_user = Factory(:user,  {:profile => Factory(:profile_contributor), :login => 'other_user'})
+      @article1 = Factory(:article, :title => 'a1 title', :body => 'a1 body',:user => @current_user)
+      @article2 = Factory(:article, :title => 'a2 title', :body => 'a2 body', :user=> @current_user)
+      
+
+    end
+
+    it "should not allow only an admin to merge" do
+      
+      #current_user = double('nonadmin')
+      #current_user.stub(:admin?).with(false)      
+      
+      post :merge, {  :id=>@article1.id,  :merge_with => @article2.id  }, { :user => @current_user}
+      p flash
+      response.should redirect_to(:action => 'index')
+      flash[:error].should == _("Error, you are not allowed to perform this action")
+
+    end
+  end
+=end
 end

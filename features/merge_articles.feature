@@ -12,15 +12,21 @@ Feature: Merge Articles
 	And I should see "Excerpts"
 	And I should see "Merge Articles"
 
-	Scenario: Creating two new articles and merging them
+	Scenario: When articles are merged, the merged article should contain the text of both previous articles
 	Given I have added two articles with comments
 	And I open the first article as admin and merge it with the second one
 	And I open the first article in show mode
 	Then I should see body of earlier first and second articles inside first article	
 	And I should see comments of earlier first and second articles inside first article 		
 	And I should not see the second article in admin panel
-    
 
+	Scenario: A non-admin cannot merge two articles
+	Given I have added two articles with comments
+	And I logout
+	And a non-admin user is added and logged in
+	Then opening admin panel should fail
+	
+   
 	#Given the blog is set up
 	#And I am logged into the admin panel
 	#And I create an article with title "First Test Article" and body "First Test Article Body"
@@ -30,11 +36,6 @@ Feature: Merge Articles
 	#| comment_author |  comment_email | comment_url | comment_body |
 	#| Test Commenter 1  | testcommenter1@gmail.com | http://testcomment1.com | This is test comment 1 |
 	
-
-
-
-
-
 	#When I follow "Total posts"
 	#Then I should see ""
 	#When I follow "http://0.0.0.0:3000/iz5uQ0"

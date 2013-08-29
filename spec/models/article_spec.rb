@@ -1,6 +1,6 @@
 # coding: utf-8
 require 'spec_helper'
-
+require 'ruby_debug'
 describe Article do
 
   before do
@@ -630,8 +630,34 @@ describe Article do
     end
 
   end
+ 
+  describe '#merge_with' do
+    it "should merge articles correctly" do
+      article1 = Factory(:article, :title => 'a1 title', :body => 'a1 body', :id=>1)
+      article2 = Factory(:article, :title => 'a2 title', :body => 'a2 body', :id=>2)
+      comment1 = Factory(:comment, :author => 'TC1', :article => article1, :body => 'TC1 body')  
+      comment2 = Factory(:comment, :author => 'TC2', :article => article2, :body => 'TC2 body')  
+      article1.should_receive(:save)
+      
+      article1.merge_with(2)
 
-  describe '#merge_articles'
-  
+      article1.body.should =~ /a1 body/
+      article1.body.should =~ /a2 body/
+      
+      article1.comments[0].author.should be == "TC1"
+      article1.comments[0].body.should be == "TC1 body"
+      article1.comments[1].author.should be == "TC2"
+      article1.comments[1].body.should be == "TC2 body"
+
+    end
+  end  
 end
 
+#article1 = Article.new
+#article2 = Article.new
+#article1.title = "First Test Article Title"
+#article2.title = "Second Test Article Title"
+#article1.body = "First Test Article Body"
+#article2.body = "Second Test Article Body"
+#comment1 = Comment.new ({ :author => 'TC1', :article => article1, :body => 'TC1 body', :ip=>'1.2.3.4'} )
+#comment2 = Comment.new ({ :author => 'TC2', :article => article2, :body => 'TC2 body', :ip=>'5.6.7.8'}) 

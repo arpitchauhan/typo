@@ -127,7 +127,9 @@ class Article < Content
     #self.author += '.' + other_article.author
     #self.body += '\n' + other_article.body
     other_article = Article.find_by_id(other_article_id)
+    self.body += '\n'
     self.body += other_article.body
+    self.extended += '\n'
     self.extended += other_article.extended
     
     # merge the comments
@@ -135,6 +137,8 @@ class Article < Content
       comment.article = self
       comment.save
     end
+    self.save
+    other_article.destroy
     
     # check if the other_article is a merged article
     # if so, then point all of those merges to this article
@@ -146,8 +150,7 @@ class Article < Content
     #MergedAuthor.new("user_id" => other_article.user_id, "article_id" => self.id).save
     
     # save the article and remove the old
-    self.save
-    other_article.destroy
+    
   end
 
 

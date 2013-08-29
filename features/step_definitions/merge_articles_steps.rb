@@ -81,8 +81,8 @@ Given /^I have added two articles with comments$/ do
   And I enter a comment
   | comment_author |  comment_email | comment_url | comment_body |
   | Test Commenter 2  | testcommenter2@gmail.com | http://testcomment2.com | This is test comment 2 |
-
   }  
+
 end
 
 And /^I open the first article as admin and merge it with the second one$/ do
@@ -97,3 +97,37 @@ And /^I open the first article as admin and merge it with the second one$/ do
   click_button 'Merge'
 
 end
+
+
+And /^I logout$/ do
+  visit '/admin/content'
+  click_link 'Log out'
+  page.should have_content("Successfully logged out")
+end
+
+And /^a non-admin user is added and logged in$/ do
+  nonadmin = User.create!({:login => 'nonadmin',
+                :password => 'bbbbbbbb',
+                :email => 'abc@xyz.com',
+                :profile_id => 3 ,
+                :name => 'nonadmin',
+                :state => 'active'})
+  
+  visit '/accounts/login'
+  fill_in 'user_login', :with => 'nonadmin'
+  fill_in 'user_password', :with => 'bbbbbbbb'
+  click_button 'Login'
+  page.should have_content('Login successful')
+
+end
+
+Then /^opening admin panel should fail$/ do
+  
+  expect { 
+    visit '/admin/content'
+  }.to raise_error(Capybara::InfiniteRedirectError)
+      
+end
+
+
+#profile_id is 1 for admin, 2 for publisher and 3 for contributor
