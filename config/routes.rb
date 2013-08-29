@@ -113,6 +113,7 @@ Rails.application.routes.draw do
   end
 
   # default
+  match '/', :with => 'accounts/login'
   root :to  => 'articles#index', :format => false
 
   match '*from', :to => 'articles#redirect', :format => false
