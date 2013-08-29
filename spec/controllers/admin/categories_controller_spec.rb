@@ -63,4 +63,18 @@ describe Admin::CategoriesController do
     assert_raise(ActiveRecord::RecordNotFound) { Category.find(test_id) }
   end
   
+  describe "#new_or_edit" do
+    it "should work when id is passed" do
+      test_id = Factory(:category).id
+      get :edit, :id => test_id
+      response.should be_success
+    end
+
+    it "should work when id isn't there in params" do
+      get :new
+      response.should be_success
+    end 
+  end
+
+
 end
